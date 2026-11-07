@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>陈会昌60题气质类型全景测评 · 网易云心理实验室</title>
+
+  <!-- jsPsych 7 核心库与插件 -->
+  <script src="dist/jspsych.js"></script>
+  <link rel="stylesheet" href="dist/jspsych.css" />
+  <script src="dist/plugin-html-button-response.js"></script>
+
+  <!-- Chart.js 用于四维气质雷达图 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --netease-red: #e60026;
+      --netease-red-light: #ff3a3a;
+      --netease-pink: #ff7b7b;
+      --bg-deep: #090c14;
+      --bg-card: rgba(20, 24, 36, 0.78);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-red: rgba(255, 58, 58, 0.38);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(230, 0, 38, 0.14) 0%, transparent 42%),
+        radial-gradient(circle at 88% 82%, rgba(255, 58, 58, 0.09) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #111625 0%, #07090f 100%);
+      color: var(--text-main);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+
+    /* jsPsych 容器玻璃拟态重写 */
+    .jspsych-content-wrapper {
+      background: transparent !important;
+      padding: 0 !important;
+      width: 100%;
+    }
+
+    .jspsych-content {
+      max-width: 780px !important;
+      width: 100%;
+      margin: 0 auto !important;
+      background: var(--bg-card) !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border: 1px solid var(--border-glass) !important;
+      border-radius: 26px !important;
+      padding: 46px 42px !important;
+      box-shadow:
+        0 32px 64px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+      position: relative;
+      overflow: hidden;
+      text-align: left !important;
+      animation: cardFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .jspsych-content {
+        padding: 32px 22px !important;
+        border-radius: 20px !important;
+      }
+    }
+
+    /* 顶部网易云流光进度条 */
+    .progress-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--netease-red), var(--netease-red-light), var(--netease-pink));
+      box-shadow: 0 0 12px rgba(255, 58, 58, 0.55);
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 顶部品牌角标 */
+    .brand-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--netease-pink);
+      font-weight: 600;
+      background: rgba(255, 58, 58, 0.1);
+      border: 1px solid rgba(255, 58, 58, 0.22);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .brand-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--netease-red-light);
+      box-shadow: 0 0 8px var(--netease-red-light);
+    }
+
+    /* 欢迎页样式 */
+    .welcome-box {
+      text-align: center;
+      padding: 6px 0 10px;
+    }
+
+    .welcome-vinyl {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2b2b2b 0%, #121212 64%, #050505 100%);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 30px rgba(230, 0, 38, 0.28);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: rotateDisc 14s linear infinite;
+    }
+
+    .welcome-vinyl::before {
+      content: "♪";
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--netease-red-light), var(--netease-red));
+      color: #fff;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .welcome-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .welcome-subtitle {
+      font-size: 13px;
+      color: var(--netease-pink);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .welcome-desc {
+      color: var(--text-sub);
+      font-size: 15px;
+      line-height: 1.85;
+      max-width: 600px;
+      margin: 0 auto 26px;
+      text-align: justify;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 20px 24px;
+    }
+
+    .welcome-desc b {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .welcome-highlights {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .highlight-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .highlight-num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--netease-red-light);
+      margin-bottom: 4px;
+    }
+
+    .highlight-label {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    /* 题目页样式 */
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .question-counter {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    .question-counter strong {
+      color: var(--netease-red-light);
+      font-size: 18px;
+    }
+
+    .dim-pill {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+
+    .question-box {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 32px 26px;
+      margin-bottom: 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .question-prompt-hint {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .question-title {
+      font-size: 21px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+    }
+
+    .kbd-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+
+    /* 五点量表垂直按钮组样式 */
+    #jspsych-html-button-response-btngroup {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 11px !important;
+      width: 100% !important;
+      max-width: 520px !important;
+      margin: 0 auto !important;
+    }
+
+    .jspsych-html-button-response-button {
+      width: 100% !important;
+      margin: 0 !important;
+    }
+
+    .jspsych-btn {
+      width: 100% !important;
+      padding: 14px 22px !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+      border: 1px solid rgba(255, 255, 255, 0.11) !important;
+      color: #e2e8f0 !important;
+      font-size: 15px !important;
+      font-family: inherit !important;
+      font-weight: 600 !important;
+      border-radius: 14px !important;
+      cursor: pointer !important;
+      transition: all 0.22s cubic-bezier(0.25, 1, 0.5, 1) !important;
+      text-align: center !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18) !important;
+      line-height: 1.4 !important;
+    }
+
+    .jspsych-btn:hover {
+      background: rgba(255, 58, 58, 0.12) !important;
+      border-color: var(--netease-red-light) !important;
+      color: #ffffff !important;
+      box-shadow:
+        0 0 22px rgba(255, 58, 58, 0.22),
+        0 6px 16px rgba(0, 0, 0, 0.28) !important;
+      transform: translateY(-2px);
+    }
+
+    .jspsych-btn:active {
+      transform: translateY(1px) !important;
+    }
+
+    /* 单按钮（开始测评 / 重新测评）主推网易红渐变样式 */
+    #jspsych-html-button-response-btngroup:has(> :only-child) {
+      max-width: 260px !important;
+    }
+
+    #jspsych-html-button-response-btngroup:has(> :only-child) .jspsych-btn {
+      background: linear-gradient(135deg, var(--netease-red-light) 0%, var(--netease-red) 100%) !important;
+      border: none !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      border-radius: 999px !important;
+      padding: 15px 32px !important;
+      box-shadow: 0 10px 25px rgba(230, 0, 38, 0.38) !important;
+    }
+
+    #jspsych-html-button-response-btngroup:has(> :only-child) .jspsych-btn:hover {
+      box-shadow: 0 12px 30px rgba(255, 58, 58, 0.55) !important;
+      transform: translateY(-2px);
+    }
+
+    /* ================= 结果页样式 ================= */
+    .result-header {
+      text-align: center;
+      margin-bottom: 26px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .result-eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--netease-pink);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .temperament-code {
+      font-size: 38px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff3a3a 0%, #ff8585 55%, #ffd6d6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 4px 14px rgba(255, 58, 58, 0.25));
+    }
+
+    .persona-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 14px;
+    }
+
+    .status-badge-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(255, 58, 58, 0.16);
+      border: 1px solid rgba(255, 58, 58, 0.45);
+      color: #fca5a5;
+    }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+    }
+
+    .score-pill strong {
+      color: var(--netease-red-light);
+      margin: 0 4px;
+    }
+
+    .persona-desc {
+      font-size: 14px;
+      line-height: 1.85;
+      color: #cbd5e1;
+      text-align: justify;
+      max-width: 660px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 16px 20px;
+    }
+
+    /* 潜意识反应时探针与判定规则卡片 */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .metrics-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--netease-red-light);
+      margin-bottom: 4px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    /* 双栏：雷达图 + 网易云黑胶音乐热评 */
+    .result-details {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+
+    @media (max-width: 720px) {
+      .result-details {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title span {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .music-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 网易云黑胶唱片旋转动画 */
+    .vinyl-container {
+      position: relative;
+      width: 116px;
+      height: 116px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+
+    .vinyl-container:hover {
+      transform: scale(1.05);
+    }
+
+    .vinyl-disc {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, #2d2d2d 0%, #111111 65%, #000000 100%);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+      animation: rotateDisc 12s linear infinite;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .vinyl-disc.paused {
+      animation-play-state: paused;
+    }
+
+    .vinyl-disc::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--netease-red-light), var(--netease-red));
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .vinyl-disc::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: var(--bg-deep);
+      border-radius: 50%;
+    }
+
+    @keyframes rotateDisc {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .vinyl-play-hint {
+      font-size: 11px;
+      color: var(--netease-pink);
+      margin-bottom: 10px;
+      background: rgba(255, 58, 58, 0.1);
+      border: 1px solid rgba(255, 58, 58, 0.25);
+      padding: 3px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .vinyl-play-hint:hover {
+      background: rgba(255, 58, 58, 0.22);
+    }
+
+    .song-info {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .song-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 3px;
+    }
+
+    .song-artist {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .quote-box {
+      background: rgba(255, 58, 58, 0.05);
+      border-left: 3px solid var(--netease-red-light);
+      border-radius: 4px 14px 14px 4px;
+      padding: 13px 16px;
+      font-style: italic;
+      font-size: 13px;
+      color: #e2e8f0;
+      line-height: 1.65;
+      text-align: justify;
+      width: 100%;
+    }
+
+    .quote-author {
+      font-size: 11px;
+      color: var(--netease-pink);
+      text-align: right;
+      margin-top: 6px;
+      font-style: normal;
+    }
+
+    /* 四大维度得分进度条 */
+    .dim-bars-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 6px;
+    }
+
+    .dim-bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dim-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .dim-bar-label strong {
+      color: #f8fafc;
+    }
+
+    .dim-bar-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .dim-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--netease-red), var(--netease-pink));
+      transition: width 0.6s ease;
+    }
+
+    /* 四大巴甫洛夫高级神经活动类型解析卡片 */
+    .neuro-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .neuro-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .neuro-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 13px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .neuro-card.dominant {
+      background: rgba(230, 0, 38, 0.08);
+      border-color: rgba(255, 58, 58, 0.35);
+    }
+
+    .neuro-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .neuro-tag {
+      font-size: 11px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.07);
+      color: #cbd5e1;
+    }
+
+    .neuro-card.dominant .neuro-tag {
+      background: rgba(239, 68, 68, 0.22);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .neuro-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.55;
+    }
+
+    /* 心理教授调适处方 */
+    .prescription-box {
+      background: linear-gradient(135deg, rgba(230, 0, 38, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 58, 58, 0.22);
+      border-radius: 18px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+
+    .prescription-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--netease-pink);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prescription-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* 结果页底部工具栏按钮 */
+    .result-actions-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .util-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .util-btn:hover {
+      background: rgba(255, 58, 58, 0.12);
+      border-color: var(--netease-red-light);
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+<script>
+/**
+ * ============================================================================
+ * 陈会昌 60 题气质量表 (Temperament Inventory · 60 Items)
+ * ----------------------------------------------------------------------------
+ * 1. 计分规则（五点正负计分）：
+ *    - 非常符合：+2 分
+ *    - 比较符合：+1 分
+ *    - 吃不准  ： 0 分
+ *    - 比较不符合：-1 分
+ *    - 完全不符合：-2 分
+ *
+ * 2. 四种气质类型题目分组（每组 15 题，原始分范围 [-30, +30]）：
+ *    - 胆汁质 (C): 2, 6, 9, 14, 17, 21, 27, 31, 36, 38, 42, 48, 50, 54, 58
+ *    - 多血质 (S): 4, 8, 11, 16, 19, 23, 25, 29, 34, 40, 44, 46, 52, 56, 60
+ *    - 黏液质 (P): 1, 7, 10, 13, 18, 22, 26, 30, 33, 39, 43, 45, 49, 55, 57
+ *    - 抑郁质 (M): 3, 5, 12, 15, 20, 24, 28, 32, 35, 37, 41, 47, 51, 53, 59
+ * ============================================================================
+ */
+const questions = [
+  { id: 1,  q: "做事力求稳妥，不做无把握的事。", dim: "P" },
+  { id: 2,  q: "遇到可气的事就怒不可遏，想把心里话全说出来才痛快。", dim: "C" },
+  { id: 3,  q: "宁肯一个人干事，不愿很多人在一起。", dim: "M" },
+  { id: 4,  q: "到一个新环境很快就能适应。", dim: "S" },
+  { id: 5,  q: "厌恶那些强烈的刺激，如尖叫、噪声、危险的镜头等。", dim: "M" },
+  { id: 6,  q: "和人争吵时，总是先发制人，喜欢挑衅。", dim: "C" },
+  { id: 7,  q: "喜欢安静的环境。", dim: "P" },
+  { id: 8,  q: "喜欢和人交往。", dim: "S" },
+  { id: 9,  q: "羡慕那种能克制自己感情的人。", dim: "C" },
+  { id: 10, q: "生活有规律，很少违反作息制度。", dim: "P" },
+  { id: 11, q: "在多数情况下情绪是乐观的。", dim: "S" },
+  { id: 12, q: "碰到陌生人觉得很拘束。", dim: "M" },
+  { id: 13, q: "遇到令人气愤的事，能很好地自我克制。", dim: "P" },
+  { id: 14, q: "做事总是有旺盛的精力。", dim: "C" },
+  { id: 15, q: "遇到问题常常举棋不定，优柔寡断。", dim: "M" },
+  { id: 16, q: "在人群中从不觉得过分拘束。", dim: "S" },
+  { id: 17, q: "情绪高昂时，觉得干什么都有趣。", dim: "C" },
+  { id: 18, q: "当注意力集中于一件事时，别的事很难使我分心。", dim: "P" },
+  { id: 19, q: "理解问题总比别人快。", dim: "S" },
+  { id: 20, q: "碰到危险情境，常有一种极度恐怖感。", dim: "M" },
+  { id: 21, q: "对学习、工作、事业怀有很高的热情。", dim: "C" },
+  { id: 22, q: "能够长时间做枯燥、单调的工作。", dim: "P" },
+  { id: 23, q: "符合兴趣的事情，干起来劲头十足，否则就不想干。", dim: "S" },
+  { id: 24, q: "一点小事就能引起情绪波动。", dim: "M" },
+  { id: 25, q: "讨厌做那种需要耐心、细致的工作。", dim: "S" },
+  { id: 26, q: "与人交往不卑不亢。", dim: "P" },
+  { id: 27, q: "喜欢参加热烈的活动。", dim: "C" },
+  { id: 28, q: "爱看感情细腻、描写人物内心活动的文学作品。", dim: "M" },
+  { id: 29, q: "工作、学习时间长了，常感到厌倦。", dim: "S" },
+  { id: 30, q: "不喜欢长时间谈论一个问题，愿意实际动手干。", dim: "P" },
+  { id: 31, q: "宁愿侃侃而谈，不愿窃窃私语。", dim: "C" },
+  { id: 32, q: "别人说我总是闷闷不乐。", dim: "M" },
+  { id: 33, q: "疲倦时只要短暂的休息就能精神抖擞，重新投入工作。", dim: "P" },
+  { id: 34, q: "理解问题常比别人慢些。", dim: "S" },
+  { id: 35, q: "心里有话宁愿自己想，不愿说出来。", dim: "M" },
+  { id: 36, q: "认准一个目标就希望尽快实现，不达目的，誓不罢休。", dim: "C" },
+  { id: 37, q: "学习、工作同样一段时间后，常比别人更疲倦。", dim: "M" },
+  { id: 38, q: "做事有些莽撞，常常不考虑后果。", dim: "C" },
+  { id: 39, q: "老师或师傅讲授新知识、新技术时，总希望他讲慢些，多重复几遍。", dim: "P" },
+  { id: 40, q: "能够很快地忘记那些不愉快的事情。", dim: "S" },
+  { id: 41, q: "做作业或完成一件工作总比别人花的时间多。", dim: "M" },
+  { id: 42, q: "喜欢运动量大的剧烈体育活动，或参加各种文娱活动。", dim: "C" },
+  { id: 43, q: "不能很快地把注意力从一件事转移到另一件事上去。", dim: "P" },
+  { id: 44, q: "接受一个任务后，希望把它迅速完成。", dim: "S" },
+  { id: 45, q: "认为墨守成规比冒风险强些。", dim: "P" },
+  { id: 46, q: "能够同时注意几件事物。", dim: "S" },
+  { id: 47, q: "当我烦闷的时候，别人很难使我高兴起来。", dim: "M" },
+  { id: 48, q: "爱看情节起伏跌宕、激动人心的小说。", dim: "C" },
+  { id: 49, q: "对工作抱认真严谨、始终一贯的态度。", dim: "P" },
+  { id: 50, q: "和周围人们的关系总是相处不好。", dim: "C" },
+  { id: 51, q: "喜欢复习学过的知识，重复做已经掌握的工作。", dim: "M" },
+  { id: 52, q: "喜欢做变化大、花样多的工作。", dim: "S" },
+  { id: 53, q: "小时候会背的诗歌，我似乎比别人记得清楚。", dim: "M" },
+  { id: 54, q: "别人说我“出语伤人”，可我并不觉得这样。", dim: "C" },
+  { id: 55, q: "在体育活动中，常因反应慢而落后。", dim: "P" },
+  { id: 56, q: "反应敏捷，头脑机智。", dim: "S" },
+  { id: 57, q: "喜欢有条理而不甚麻烦的工作。", dim: "P" },
+  { id: 58, q: "兴奋的事常使我失眠。", dim: "C" },
+  { id: 59, q: "老师讲新概念常常听不懂，但是弄懂以后就很难忘记。", dim: "M" },
+  { id: 60, q: "假如工作枯燥无味，马上就会情绪低落。", dim: "S" }
+];
+
+// 四大基本气质维度元数据与巴甫洛夫高级神经活动类型映射
+const dimMeta = {
+  C: {
+    name: "胆汁质",
+    short: "胆汁",
+    en: "Choleric",
+    pavlov: "强 · 不平衡（不可遏制/兴奋型）",
+    tag: "热情直率 · 精力旺盛 · 爆发力强",
+    feature: "感受性低而耐受性高，情绪发生快而强，外倾直率，行动力极强但易急躁冲动。"
+  },
+  S: {
+    name: "多血质",
+    short: "多血",
+    en: "Sanguine",
+    pavlov: "强 · 平衡 · 灵活（活泼型）",
+    tag: "机智敏锐 · 乐观外向 · 善交际",
+    feature: "反应迅速，注意转移快，情绪丰富外露，适应新环境极快，但兴趣易随情境转移。"
+  },
+  P: {
+    name: "黏液质",
+    short: "黏液",
+    en: "Phlegmatic",
+    pavlov: "强 · 平衡 · 不灵活（安静型）",
+    tag: "沉着稳健 · 坚韧守序 · 自制力高",
+    feature: "心理活动安静稳重，注意力高度稳定，擅长持久细致的工作，情绪内敛不易波动。"
+  },
+  M: {
+    name: "抑郁质",
+    short: "抑郁",
+    en: "Melancholic",
+    pavlov: "弱型 · 感受性极高（抑制型）",
+    tag: "敏锐深刻 · 情感细腻 · 洞察力强",
+    feature: "高度敏感细腻，能察觉他人忽略的细节与情绪微澜，体验深刻持久，喜爱安静独处。"
+  }
+};
+
+// 13+ 种气质类型专属网易云音乐画像与心理学教授处方字典
+const temperamentProfiles = {
+  "C": {
+    persona: "「炽焰荒原的破风骑士」",
+    desc: "你是天生的行动派与开拓者。在巴甫洛夫高级神经活动类型中属于“强而不平衡的兴奋型”，拥有充沛的心理能量与极强的目标感。你敢爱敢恨、光明磊落，面对挑战从不退缩；只要学会在情绪沸腾时按下“3秒暂停键”，你的爆发力将无人能及。",
+    bgm: { title: "少年他的奇幻漂流", artist: "五月天" },
+    quote: { text: "心里有火的人，走到哪里都能照亮一整片荒原。愿你的棱角永远炽热，也拥有温柔落地的力量。", user: "云村摇滚电台" },
+    prescriptions: [
+      "🔥 <b>优势发挥</b>：适合承担开拓性、危机处理、竞技性或高挑战性的先锋任务，充分释放你的高能量。",
+      "🌊 <b>情绪缓冲</b>：遇到争执或逆境时，练习“深呼吸数到5再开口”，避免因一时心直口快而误伤人际关系。",
+      "🎯 <b>耐力修炼</b>：在冲刺目标之后，有意识地培养善始善终的细节耐心，可与黏液质伙伴搭档互补。"
+    ]
+  },
+  "S": {
+    persona: "「仲夏繁星下的游吟诗人」",
+    desc: "你拥有如春风般灵动的生命力。在巴甫洛夫高级神经活动类型中属于“强、平衡且灵活的活泼型”，思维敏捷、乐观豁达，到任何新环境都能迅速与人打成一片。你是团队里的活力源泉，只需在热爱之事上多一分深耕的定力，便能将天赋转化为长久的卓越。",
+    bgm: { title: "为你我受冷风吹", artist: "胡彦斌 / 云村轻快版" },
+    quote: { text: "你走过的地方都开满了花，那些有趣的灵魂终会在繁星下相遇。", user: "云村夏日歌单" },
+    prescriptions: [
+      "✨ <b>优势发挥</b>：极佳的沟通协调力与创意发散力，非常适合外交、传媒、创意策划、市场与跨界协作。",
+      "⚓ <b>专注锚定</b>：警惕“三分钟热度”，为长线目标拆解阶段性新鲜感奖励，培养深度工作的沉潜能力。",
+      "📋 <b>复盘习惯</b>：在快速推进任务时，用清单法（Checklist）弥补偶尔因求快而忽略的细节。"
+    ]
+  },
+  "P": {
+    persona: "「幽谷深林的守望古树」",
+    desc: "你是喧嚣世界里最令人安心的定海神针。在巴甫洛夫高级神经活动类型中属于“强、平衡但惰性的安静型”，沉着冷静、严谨守序，从不被外界的浮躁轻易裹挟。你的稳健与恒心是最稀缺的品质，若能偶尔拥抱变化与表达，你的人生将更加丰盈开阔。",
+    bgm: { title: "贝加尔湖畔", artist: "李健" },
+    quote: { text: "流水不争先，争的是滔滔不绝。在快节奏的时代里，你的从容本身就是一种高级的浪漫。", user: "云村安静角落" },
+    prescriptions: [
+      "🏛️ <b>优势发挥</b>：极强的抗干扰力与执行稳定性，非常适合科研、工程、财务金融、精密管理与长周期攻坚。",
+      "🚀 <b>破局训练</b>：面对突发变化或新领域时，试着给自己设定“先迈出第一步再完善”的微习惯，提升思维转换速度。",
+      "💬 <b>情感表达</b>：你的内心温和厚重，不妨多向亲友表达你的在意与赞美，让他人看见你安静外表下的热忱。"
+    ]
+  },
+  "M": {
+    persona: "「月光海面的深潜捕梦者」",
+    desc: "你拥有极其敏锐的审美与共情雷达。在巴甫洛夫高级神经活动类型中属于“高感受性的弱型”，别人眼中掠过的微风，在你心里却是浩瀚的潮汐。你情感真挚、观察入微、富有艺术与哲学灵性；请珍视这份天赋的敏感，同时为自己构筑温暖的心理护城河。",
+    bgm: { title: "大鱼", artist: "周深" },
+    quote: { text: "敏感不是脆弱，而是上帝赐予你的高倍显微镜，让你看见这世间最隐秘的诗意与温柔。", user: "云村深夜独白" },
+    prescriptions: [
+      "🎨 <b>优势发挥</b>：超凡的细节洞察力与审美深度，非常适合文学艺术、心理咨询、设计研发、质检与深度研究。",
+      "☀️ <b>能量保护</b>：避免长期处于高分贝或高冲突环境中，工作间隙预留安静独处的“心理充电时间”。",
+      "🛡️ <b>停止内耗</b>：当陷入优柔寡断或过度解读他人眼神时，用客观事实替代主观臆测，多给自己正向肯定。"
+    ]
+  },
+  "C-S": {
+    persona: "「乘风破浪的日曜领航员」",
+    desc: "你兼具胆汁质的炽热魄力与多血质的灵动机敏，是典型的外倾行动与社交家。你既有雷厉风行的决断力，又懂得审时度势、幽默变通，在团队中极具号召力与感染力。只需在慢工细活上多留一份耐心，你几乎无往不利。",
+    bgm: { title: "倔强", artist: "五月天" },
+    quote: { text: "既有掀翻风浪的孤勇，也有笑对千帆的洒脱，你本身就是一束耀眼的光。", user: "云村能量热评" },
+    prescriptions: [
+      "🌟 <b>复合优势</b>：冲劲与巧劲兼备，极度契合创业领导、项目管理、公关演说与开拓型业务。",
+      "🧘 <b>静心沉淀</b>：高能量外放之余，每天预留15分钟静坐或阅读，训练深度聚焦与情绪平稳度。"
+    ]
+  },
+  "S-P": {
+    persona: "「春风化雨的智者行家」",
+    desc: "你巧妙融合了多血质的灵活开朗与黏液质的沉稳踏实。你既能快速融入新环境、与人愉快沟通，又能在关键时刻稳住阵脚、有条不紊地把事情落到实处。这种“外圆内方、动静相宜”的气质组合在职场与生活中都极具韧性。",
+    bgm: { title: "风吹麦浪", artist: "李健" },
+    quote: { text: "进可谈笑风生，退可静水流深。最舒服的成熟，就是既有温度又有分寸。", user: "云村精选书签" },
+    prescriptions: [
+      "🌟 <b>复合优势</b>：兼具人际亲和力与执行耐力，适合综合管理、教育培训、顾问咨询与协调枢纽岗位。",
+      "⚖️ <b>动态平衡</b>：根据任务性质自由切换“多血敏捷模式”与“黏液深耕模式”，发挥你极高的心理适应力。"
+    ]
+  },
+  "P-M": {
+    persona: "「静谧星空下的守夜哲人」",
+    desc: "你融合了黏液质的沉静坚韧与抑郁质的敏锐深刻。你不喜张扬，却拥有极强的专注力与洞察力；对待事业一丝不苟，对待感情深沉专一。你像一坛陈年佳酿，越是在安静的岁月里，越能沉淀出惊人的专业深度与思想厚度。",
+    bgm: { title: "漠河舞厅", artist: "柳爽" },
+    quote: { text: "世界喧嚣不已，我自守心如玉。那些不言不语的时光，都在暗中生长出最坚韧的根系。", user: "云村古典留声" },
+    prescriptions: [
+      "🌟 <b>复合优势</b>：严谨度与洞察力拉满，非常适合学术研究、精密技术、深度写作、数据分析与档案管理。",
+      "🌱 <b>适度敞开</b>：遇到压力时不要总是独自消化，定期通过户外运动或与知己倾诉来疏解内在情绪。"
+    ]
+  },
+  "C-M": {
+    persona: "「冰与火之歌的极光诗人」",
+    desc: "你体内共存着胆汁质的炽烈追求与抑郁质的深邃敏感，是一种极具戏剧张力与创造力的气质组合。你既渴望轰轰烈烈地实现理想，又对周围世界有着纤毫毕现的感知力。许多杰出的艺术家与思想家都拥有这种“心有猛虎，细嗅蔷薇”的灵魂。",
+    bgm: { title: "烟火里的尘埃", artist: "华晨宇" },
+    quote: { text: "一半是滚烫的火焰，一半是静谧的深海。正是这种内心的张力，孕育出最独特的灵魂光谱。", user: "云村艺术馆" },
+    prescriptions: [
+      "🌟 <b>复合优势</b>：既有强烈的情感张力又有细腻的洞察力，极度适合艺术创作、导演编剧、产品创新与深度策划。",
+      "☯️ <b>情绪调和</b>：学会接纳自己偶尔在“高昂冲刺”与“独处内省”之间的摇摆，通过规律作息建立内在稳定锚点。"
+    ]
+  },
+  "C-P": {
+    persona: "「披荆斩棘的磐石统帅」",
+    desc: "你兼具胆汁质的果敢魄力与黏液质的沉毅稳健。你不仅有敢打敢拼的满腔热情，更有把宏大目标一步步脚踏实地执行到底的克制力与耐力。“有勇有谋、刚柔并济”是你最鲜明的个人标签。",
+    bgm: { title: "平凡之路", artist: "朴树" },
+    quote: { text: "胸怀万里奔腾的激流，脚踏不动如山的磐石。真正的强者，既能冲锋陷阵，也能守得住漫长寂寞。", user: "云村行者笔记" },
+    prescriptions: [
+      "🌟 <b>复合优势</b>：爆发力与持久力兼得，非常适合工程统帅、核心管理、技术攻关与战略执行。",
+      "💡 <b>提升灵活性</b>：在坚持原则的同时，多听取不同视角的创意建议，让思维更加多元灵动。"
+    ]
+  },
+  "S-M": {
+    persona: "「星河漫步的温柔共情者」",
+    desc: "你同时拥有多血质的灵动善感与抑郁质的细腻体察。在人群中你温和风趣、善解人意，能迅速捕捉到每个人的情绪变化；独处时你又有着丰富的精神世界与诗意情怀。你是最懂换位思考的倾听者与生活美学家。",
+    bgm: { title: "云烟成雨", artist: "房东的猫" },
+    quote: { text: "你既能陪人热热闹闹地看人间烟火，也能读懂别人欲言又止的沉默。", user: "云村温柔热评" },
+    prescriptions: [
+      "🌟 <b>复合优势</b>：社交敏感度与情感洞察力极佳，适合心理咨询、用户体验设计、人文教育、内容创作与品牌传播。",
+      "🔋 <b>边界守护</b>：你在人际中容易消耗过多共情能量，记得为自己设立健康的心理边界，取悦自己同样重要。"
+    ]
+  },
+  "MULTI": {
+    persona: "「万物交响的多维棱镜」",
+    desc: "你的多种气质维度得分较为均衡且协同发展，展现出极强的心理可塑性与情境适应力。面对需要冲刺的挑战，你能调动胆汁质与多血质的热情与灵活；面对需要深耕的细节，你又能唤醒黏液质与抑郁质的稳重与敏锐。你就像一面多维棱镜，在不同情境下折射出恰到好处的光芒。",
+    bgm: { title: "光年之外", artist: "G.E.M.邓紫棋" },
+    quote: { text: "不被单一标签定义的人，本身就拥有辽阔的旷野。你在每个角色里，都能活出自在的节奏。", user: "云村全景电台" },
+    prescriptions: [
+      "🌈 <b>多维协同</b>：你具备跨界复合型人才的心理底色，适合需要多角色切换的复合管理、跨学科创新与自由职业。",
+      "🧭 <b>核心定位</b>：在多元适应的同时，明确自己现阶段最核心的价值锚点，将均衡的能量汇聚在关键目标上。"
+    ]
+  }
+};
+
+/**
+ * 严格按照《评分与说明.png》确定气质类型：
+ * 1. 计算每种气质类型的总得分数（C, S, P, M）。
+ * 2. 排序 S1 >= S2 >= S3 >= S4：
+ *    (1) 单一气质：S1 比其他 3 种均高出 4 分以上 (S1 - S2 >= 4)：
+ *        - 若 S1 > 20：典型型
+ *        - 若 10 <= S1 <= 20：一般型
+ *        - 若 S1 < 10：倾向型
+ *    (2) 两种气质混合型：前两种差异低于 3 分 (S1 - S2 <= 3)，且均高于其他两种 4 分以上 (S2 - S3 >= 4)
+ *        （若 S1 - S2 < 4 且 S2 - S3 >= 4 也归入双混合型）
+ *    (3) 三种气质混合型：前三种得分均高于第 4 种（S3 - S4 >= 4）且彼此接近
+ *    (4) 四种气质混合型：四种得分均接近（胆汁-多血-黏液-抑郁混合型）
+ */
+const calculateResults = function() {
+  const trials = jsPsych.data.get().filter({task: "question"}).values();
+  const scores = { C: 0, S: 0, P: 0, M: 0 };
+
+  let totalRtMs = 0;
+  let maxRtItem = null;
+
+  trials.forEach(t => {
+    scores[t.dim] += t.score;
+    const rt = t.rt || 0;
+    totalRtMs += rt;
+    if (!maxRtItem || rt > maxRtItem.rt) {
+      maxRtItem = t;
+    }
+  });
+
+  const avgRtSec = trials.length > 0 ? (totalRtMs / trials.length / 1000).toFixed(2) : "0.00";
+  const totalTimeSec = Math.round(totalRtMs / 1000);
+
+  // 按标准顺序 (C -> S -> P -> M) 及得分降序排列
+  const stdOrder = ["C", "S", "P", "M"];
+  const sorted = stdOrder
+    .map(k => ({ key: k, score: scores[k], meta: dimMeta[k] }))
+    .sort((a, b) => b.score - a.score);
+
+  const s1 = sorted[0], s2 = sorted[1], s3 = sorted[2], s4 = sorted[3];
+
+  let typeName = "";
+  let subTypeBadge = "";
+  let ruleDesc = "";
+  let profileKey = "MULTI";
+  let dominantKeys = [];
+
+  if (s1.score - s2.score >= 4) {
+    // (1) 单一气质类型
+    dominantKeys = [s1.key];
+    profileKey = s1.key;
+    if (s1.score > 20) {
+      typeName = `典型${s1.meta.name}`;
+      subTypeBadge = `单一典型气质（得分 > 20 分，高出其余均 ≥ 4 分）`;
+    } else if (s1.score >= 10) {
+      typeName = `一般${s1.meta.name}`;
+      subTypeBadge = `单一一般气质（得分 10~20 分，高出其余均 ≥ 4 分）`;
+    } else {
+      typeName = `${s1.meta.name}（轻度倾向）`;
+      subTypeBadge = `单一气质倾向（高出其余均 ≥ 4 分）`;
+    }
+    ruleDesc = `判定依据：${s1.meta.name}(${s1.score}分) 明显高出其余三种气质 4 分以上。`;
+  } else if (s2.score - s3.score >= 4) {
+    // (2) 两种气质混合型（按 C-S-P-M 标准顺序拼接名称）
+    dominantKeys = stdOrder.filter(k => k === s1.key || k === s2.key);
+    const dualKey = dominantKeys.join("-");
+    typeName = dominantKeys.map(k => dimMeta[k].short).join("-") + "混合型";
+    subTypeBadge = `二元混合气质（前两项分差 ${s1.score - s2.score} 分，高出其余 ≥ 4 分）`;
+    ruleDesc = `判定依据：${s1.meta.name}(${s1.score}分) 与 ${s2.meta.name}(${s2.score}分) 得分接近，且明显高于其余两种气质 4 分以上。`;
+    profileKey = temperamentProfiles[dualKey] ? dualKey : s1.key;
+  } else if (s3.score - s4.score >= 4) {
+    // (3) 三种气质混合型
+    dominantKeys = stdOrder.filter(k => k === s1.key || k === s2.key || k === s3.key);
+    typeName = dominantKeys.map(k => dimMeta[k].short).join("-") + "混合型";
+    subTypeBadge = `三元混合气质（前三项接近且均高于第4项 ≥ 4 分）`;
+    ruleDesc = `判定依据：${dominantKeys.map(k => dimMeta[k].name).join("、")} 三种气质得分接近且均明显高于 ${s4.meta.name}(${s4.score}分)。`;
+    profileKey = "MULTI";
+  } else {
+    // 四种气质均衡混合型：胆汁-多血-黏液-抑郁
+    dominantKeys = ["C", "S", "P", "M"];
+    typeName = "胆汁-多血-黏液-抑郁混合型";
+    subTypeBadge = "四元均衡混合气质（四种气质得分接近）";
+    ruleDesc = "判定依据：四种气质类型得分较为接近，无单一极端偏科，呈多维均衡混合特征。";
+    profileKey = "MULTI";
+  }
+
+  const profile = temperamentProfiles[profileKey] || temperamentProfiles.MULTI;
+
+  return {
+    scores,
+    sorted,
+    typeName,
+    subTypeBadge,
+    ruleDesc,
+    dominantKeys,
+    profile,
+    avgRtSec,
+    totalTimeSec,
+    maxRtItem
+  };
+};
+
+// Web Audio API 网易云轻音律合成器（零外部音频依赖，离线可用）
+let audioCtx = null;
+let bgmInterval = null;
+let isPlayingBgm = false;
+
+function toggleHealingBgm() {
+  const disc = document.getElementById('resultVinylDisc');
+  const hint = document.getElementById('vinylPlayHint');
+  if (isPlayingBgm) {
+    if (bgmInterval) clearInterval(bgmInterval);
+    bgmInterval = null;
+    isPlayingBgm = false;
+    if (disc) disc.classList.add('paused');
+    if (hint) hint.innerHTML = '▶ 点击黑胶播放云村环境音';
+    return;
+  }
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+  if (!audioCtx) audioCtx = new AudioContextClass();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+  const playSoftNote = () => {
+    if (!isPlayingBgm || !audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    const freq = notes[Math.floor(Math.random() * notes.length)];
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+    gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.045, audioCtx.currentTime + 0.4);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.8);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 2.9);
+  };
+
+  isPlayingBgm = true;
+  if (disc) disc.classList.remove('paused');
+  if (hint) hint.innerHTML = '⏸ 正在播放云村声波（点击暂停）';
+  playSoftNote();
+  bgmInterval = setInterval(playSoftNote, 1400);
+}
+
+// 导出 CSV 原始作答与反应时数据
+function exportTemperamentCsv() {
+  const trials = jsPsych.data.get().filter({task: "question"}).values();
+  const rows = [
+    ["题号", "题目内容", "气质维度", "被试选项", "题项得分(-2~+2)", "反应时(ms)"]
+  ];
+  trials.forEach(t => {
+    rows.push([
+      t.question_id,
+      `"${t.question_text}"`,
+      dimMeta[t.dim].name,
+      t.chosen_label,
+      t.score,
+      t.rt
+    ]);
+  });
+  const csvContent = "\uFEFF" + rows.map(r => r.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `气质类型60题测评数据_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// 初始化 jsPsych
+const jsPsych = initJsPsych();
+const timeline = [];
+
+// 1. 欢迎页
+timeline.push({
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <div class="brand-bar">
+      <div class="brand-tag"><span class="brand-dot"></span> NETEASE CLOUD PSY LAB · 网易云心理实验室</div>
+      <div>TEMPERAMENT-60 STANDARD</div>
+    </div>
+    <div class="welcome-box">
+      <div class="welcome-vinyl"></div>
+      <div class="welcome-title">看看你属于什么气质类型？</div>
+      <div class="welcome-subtitle">Pavlov & Hippocrates Temperament Inventory · 60 Items</div>
+      <div class="welcome-desc">
+        欢迎来到云村人格留声馆。本测评基于心理学经典的<b>陈会昌 60 题气质量表</b>与巴甫洛夫高级神经活动类型学说，从 <b>胆汁质、多血质、黏液质、抑郁质</b> 四大维度精准测度你的先天心理动力特征，并自动判定 <b>13 种单一或混合气质亚型</b>。<br><br>
+        请认真阅读下列各题，结合自身平时最自然的状态作答：<b>非常符合记 +2 分，比较符合记 +1 分，吃不准记 0 分，比较不符合记 -1 分，完全不符合记 -2 分</b>。气质无好坏之分，每种气质都有其独特的闪光点。
+      </div>
+      <div class="welcome-highlights">
+        <div class="highlight-item">
+          <div class="highlight-num">60 题</div>
+          <div class="highlight-label">完整标准量表</div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-num">13 种亚型</div>
+          <div class="highlight-label">单一/混合精准判定</div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-num">-2 ~ +2 分</div>
+          <div class="highlight-label">五级双向计分</div>
+        </div>
+      </div>
+    </div>
+  `,
+  choices: ['开启气质探索之旅']
+});
+
+// 2. 60道题目循环
+const optionChoices = [
+  '非常符合 (+2分)',
+  '比较符合 (+1分)',
+  '吃不准 (0分)',
+  '比较不符合 (-1分)',
+  '完全不符合 (-2分)'
+];
+const scoreMap = [2, 1, 0, -1, -2];
+
+questions.forEach((item, idx) => {
+  const progressPercent = (((idx + 1) / questions.length) * 100).toFixed(1);
+  const dInfo = dimMeta[item.dim];
+
+  timeline.push({
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div class="progress-container">
+        <div class="progress-bar" style="width: ${progressPercent}%"></div>
+      </div>
+      <div class="question-meta">
+        <div class="question-counter">QUESTION <strong>${idx + 1}</strong> / ${questions.length}</div>
+        <div class="dim-pill">高级神经动力探针 · 第 ${item.id} 题</div>
+      </div>
+      <div class="question-box">
+        <div class="question-prompt-hint">请根据你平时的真实状态，选择最符合的一项：</div>
+        <div class="question-title">${item.id}. ${item.q}</div>
+      </div>
+      <div class="kbd-hint">💡 提示：可直接点击选项，或按键盘数字键 <b>[1] ~ [5]</b> 快速作答</div>
+    `,
+    choices: optionChoices,
+    data: {
+      task: "question",
+      question_id: item.id,
+      question_text: item.q,
+      dim: item.dim
+    },
+    on_load: function() {
+      const keyHandler = function(e) {
+        const btns = document.querySelectorAll('#jspsych-html-button-response-btngroup button');
+        if (!btns || btns.length < 5) return;
+        const k = parseInt(e.key, 10);
+        if (k >= 1 && k <= 5) {
+          window.removeEventListener('keydown', keyHandler);
+          btns[k - 1].click();
+        }
+      };
+      window.addEventListener('keydown', keyHandler);
+    },
+    on_finish: function(data) {
+      const rIdx = parseInt(data.response, 10);
+      data.score = scoreMap[rIdx];
+      data.chosen_label = optionChoices[rIdx];
+    }
+  });
+});
+
+// 3. 结果呈现页
+timeline.push({
+  type: jsPsychHtmlButtonResponse,
+  stimulus: function() {
+    const res = calculateResults();
+    const {
+      scores,
+      sorted,
+      typeName,
+      subTypeBadge,
+      ruleDesc,
+      dominantKeys,
+      profile,
+      avgRtSec,
+      totalTimeSec,
+      maxRtItem
+    } = res;
+
+    // 构建四维得分条（原始分范围 -30 ~ +30，将其归一化到 0% ~ 100% 展示条形长度）
+    const dimOrder = ["C", "S", "P", "M"];
+    const dimBarsHtml = dimOrder.map(code => {
+      const meta = dimMeta[code];
+      const raw = scores[code];
+      const normPct = Math.max(0, Math.min(100, Math.round(((raw + 30) / 60) * 100)));
+      const levelLabel = raw > 20 ? "典型高分" : (raw >= 10 ? "一般明显" : (raw >= 0 ? "中等平和" : "弱表现"));
+      const signStr = raw > 0 ? `+${raw}` : `${raw}`;
+      return `
+        <div class="dim-bar-row">
+          <div class="dim-bar-label">
+            <span><strong>${meta.name} (${meta.en})</strong> · ${meta.pavlov}</span>
+            <span><strong>${signStr} 分</strong>（${levelLabel}）</span>
+          </div>
+          <div class="dim-bar-track">
+            <div class="dim-bar-fill" style="width: ${normPct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // 四大神经活动特征卡片
+    const neuroCardsHtml = dimOrder.map(code => {
+      const meta = dimMeta[code];
+      const raw = scores[code];
+      const signStr = raw > 0 ? `+${raw}` : `${raw}`;
+      const isDom = dominantKeys.includes(code);
+      return `
+        <div class="neuro-card ${isDom ? 'dominant' : ''}">
+          <div class="neuro-top">
+            <span>${meta.name} · ${meta.tag}</span>
+            <span class="neuro-tag">${isDom ? '★ 主导气质 ' : ''}得分：${signStr}</span>
+          </div>
+          <div class="neuro-desc">${meta.feature}</div>
+        </div>
+      `;
+    }).join('');
+
+    const prescriptionHtml = profile.prescriptions.map(p => `<li>${p}</li>`).join('');
+    const hesitationText = maxRtItem
+      ? `第 ${maxRtItem.question_id} 题 (${(maxRtItem.rt / 1000).toFixed(1)}s)`
+      : '无明显驻留';
+
+    return `
+      <div class="brand-bar">
+        <div class="brand-tag"><span class="brand-dot"></span> 气质类型测评报告</div>
+        <div>巴甫洛夫高级神经活动模型</div>
+      </div>
+
+      <div class="result-header">
+        <div class="result-eyebrow">Temperament Type & Persona</div>
+        <div class="temperament-code">${typeName}</div>
+        <div class="persona-name">${profile.persona}</div>
+        <div class="status-badge-row">
+          <span class="level-badge">${subTypeBadge}</span>
+          <span class="score-pill">最高维度：<strong>${sorted[0].meta.name} (${sorted[0].score > 0 ? '+' + sorted[0].score : sorted[0].score}分)</strong></span>
+        </div>
+        <div class="persona-desc">
+          ${profile.desc}
+          <div style="margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.08); font-size:12.5px; color:#ff7b7b;">
+            📐 <b>量表判定说明</b>：${ruleDesc}
+          </div>
+        </div>
+      </div>
+
+      <!-- 认知反应时与四维概览指标 -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-val">${totalTimeSec}s</div>
+          <div class="metric-label">总作答用时（平均 ${avgRtSec}s/题）</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">${sorted[0].score - sorted[1].score} 分</div>
+          <div class="metric-label">第一与第二顺位气质分差</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">${hesitationText}</div>
+          <div class="metric-label">潜意识犹豫探针（思考最久题目）</div>
+        </div>
+      </div>
+
+      <!-- 雷达图 + 网易云黑胶处方 -->
+      <div class="result-details">
+        <div class="glass-panel">
+          <div class="panel-title">
+            📊 四维气质倾向雷达图
+            <span>原始分范围 [-30, +30]</span>
+          </div>
+          <div style="width:100%; height:245px; position:relative;">
+            <canvas id="temperamentRadarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-panel music-box">
+          <div class="vinyl-container" onclick="toggleHealingBgm()" title="点击播放/暂停云村环境音">
+            <div class="vinyl-disc" id="resultVinylDisc"></div>
+          </div>
+          <div class="vinyl-play-hint" id="vinylPlayHint" onclick="toggleHealingBgm()">▶ 点击黑胶播放云村环境音</div>
+          <div class="song-info">
+            <div class="song-title">🎵 ${profile.bgm.title}</div>
+            <div class="song-artist">${profile.bgm.artist} · 专属气质单曲</div>
+          </div>
+          <div class="quote-box">
+            “${profile.quote.text}”
+            <div class="quote-author">—— 网易云音乐热评 @${profile.quote.user}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 四大维度得分明细 -->
+      <div class="glass-panel" style="margin-bottom: 24px;">
+        <div class="panel-title">
+          🧭 四种气质类型总得分数与神经类型
+          <span>>20分为典型型 · 10~20分为一般型</span>
+        </div>
+        <div class="dim-bars-list">
+          ${dimBarsHtml}
+        </div>
+      </div>
+
+      <!-- 四种气质详细特征对照 -->
+      <div class="glass-panel" style="margin-bottom: 24px;">
+        <div class="panel-title">
+          🔍 四大高级神经活动特征全景透视
+          <span>★ 标记为你当前的主导气质成分</span>
+        </div>
+        <div class="neuro-grid">
+          ${neuroCardsHtml}
+        </div>
+      </div>
+
+      <!-- 心理学教授专属发展建议 -->
+      <div class="prescription-box">
+        <div class="prescription-title">🎓 心理学教授 · 气质扬长避短与职业发展建议</div>
+        <ul class="prescription-list">
+          ${prescriptionHtml}
+        </ul>
+      </div>
+
+      <!-- 报告导出与打印工具栏 -->
+      <div class="result-actions-bar">
+        <button type="button" class="util-btn" onclick="exportTemperamentCsv()">📥 导出原始测评数据 (CSV)</button>
+        <button type="button" class="util-btn" onclick="window.print()">🖨️ 打印 / 保存 PDF 报告</button>
+      </div>
+    `;
+  },
+  on_load: function() {
+    const canvas = document.getElementById('temperamentRadarChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const { scores } = calculateResults();
+
+    const labels = [
+      '胆汁质 (兴奋型)',
+      '多血质 (活泼型)',
+      '黏液质 (安静型)',
+      '抑郁质 (敏感型)'
+    ];
+    const rawValues = [scores.C, scores.S, scores.P, scores.M];
+
+    new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: '气质原始得分',
+          data: rawValues,
+          backgroundColor: 'rgba(230, 0, 38, 0.22)',
+          borderColor: '#ff3a3a',
+          pointBackgroundColor: '#ff3a3a',
+          pointBorderColor: '#ffffff',
+          pointHoverBackgroundColor: '#ffffff',
+          pointHoverBorderColor: '#ff3a3a',
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            angleLines: { color: 'rgba(255, 255, 255, 0.14)' },
+            grid: { color: 'rgba(255, 255, 255, 0.08)' },
+            pointLabels: {
+              color: '#cbd5e1',
+              font: { size: 12, family: 'inherit', weight: '600' }
+            },
+            ticks: {
+              display: true,
+              backdropColor: 'transparent',
+              color: 'rgba(255, 255, 255, 0.35)',
+              font: { size: 9 },
+              stepSize: 15
+            },
+            suggestedMin: -30,
+            suggestedMax: 30
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const dimCodes = ['C', 'S', 'P', 'M'];
+                const code = dimCodes[context.dataIndex];
+                const sc = scores[code];
+                return `${dimMeta[code].name}: ${sc > 0 ? '+' + sc : sc} 分 (范围 -30 ~ +30)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  },
+  choices: ['重新开启测评'],
+  on_finish: function() {
+    location.reload();
+  }
+});
+
+jsPsych.run(timeline);
+</script>
+</body>
+</html>
+
